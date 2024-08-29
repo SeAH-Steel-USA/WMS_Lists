@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35201.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WMS_Lists", "WMS_Lists\WMS_Lists\WMS_Lists.csproj", "{AD44BF10-3E87-4F47-BC28-1CB9F5EA9159}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WMS_Lists.Client", "WMS_Lists\WMS_Lists.Client\WMS_Lists.Client.csproj", "{59AB9EF7-67F2-4D3B-B8A3-2DD48B7B15AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD44BF10-3E87-4F47-BC28-1CB9F5EA9159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD44BF10-3E87-4F47-BC28-1CB9F5EA9159}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD44BF10-3E87-4F47-BC28-1CB9F5EA9159}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD44BF10-3E87-4F47-BC28-1CB9F5EA9159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59AB9EF7-67F2-4D3B-B8A3-2DD48B7B15AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59AB9EF7-67F2-4D3B-B8A3-2DD48B7B15AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59AB9EF7-67F2-4D3B-B8A3-2DD48B7B15AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59AB9EF7-67F2-4D3B-B8A3-2DD48B7B15AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BDFFF773-4CF5-4218-BDEF-38E84353244B}
+	EndGlobalSection
+EndGlobal

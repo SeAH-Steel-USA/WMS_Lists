@@ -1,0 +1,40 @@
+﻿@using Microsoft.EntityFrameworkCore
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+@inject ApplicationDbContext _context
+@inject Services.DataService DataService
+
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+@code{
+    
+    //Testing the SQL server connection
+
+    protected override async Task OnInitializedAsync()
+    {
+        await TestDatabaseConnectionAsync();
+    }
+
+    public async Task<bool> TestDatabaseConnectionAsync()
+    {
+        try
+        {
+            // This simply tries to open a connection to the database.
+            await _context.Database.OpenConnectionAsync();
+            _context.Database.CloseConnection();
+            Console.WriteLine("Success!");
+            return true; // Connection successful
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while trying to connect to the database: {ex.Message}");
+            return false; // Connection failed
+        }
+    }
+}

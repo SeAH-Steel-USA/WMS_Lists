@@ -11,23 +11,18 @@
 <p>This component demonstrates showing data.</p>
 
 <MudDataGrid T="FloatTableP1_Table" MultiSelection="false" Hover="true" Hideable="true" Items="@forecasts" >
- 
-            <Columns>
- 
- 
-                <PropertyColumn Property="x => x.DateAndTime" Title="Assigned by"/>
-<PropertyColumn Property="x => x.Millitm" />
-<PropertyColumn Property="x => x.TagIndex" />
-<PropertyColumn Property="x => x.Val" />
-    <PropertyColumn Property="x => x.Status"></PropertyColumn>
+    <Columns>
+        <PropertyColumn Property="x => x.DateAndTime" Title="Assigned by"/>
+        <PropertyColumn Property="x => x.Millitm" />
+        <PropertyColumn Property="x => x.TagIndex" />
+        <PropertyColumn Property="x => x.Val" />
+        <PropertyColumn Property="x => x.Status"></PropertyColumn>
         <PropertyColumn Property="x => x.Marker"></PropertyColumn>
- 
- 
- 
-            </Columns>
-<PagerContent>
-<MudDataGridPager T="FloatTableP1_Table" />
-</PagerContent>
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="FloatTableP1_Table" />
+    </PagerContent>
 </MudDataGrid>
 
 @code {

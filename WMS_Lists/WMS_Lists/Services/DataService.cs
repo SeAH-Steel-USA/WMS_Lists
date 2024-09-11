@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WMS_Lists.Data;
 
 namespace WMS_Lists.Services
@@ -31,7 +32,7 @@ namespace WMS_Lists.Services
             try
             {
                 var result = await _context.Set<T>()
-                                            .Skip(3400000)
+                                            .Skip(3700000)
                                             .ToListAsync();
 
                 return result ?? new List<T>();
@@ -42,6 +43,5 @@ namespace WMS_Lists.Services
                 return new List<T>();
             }
         }
-
     }
 }

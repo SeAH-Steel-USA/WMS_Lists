@@ -1,0 +1,89 @@
+﻿@page "/floattable_p1"
+@using Microsoft.EntityFrameworkCore
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+@inject Services.DataService DataService
+ 
+<PageTitle>FloatTable P1</PageTitle>
+
+<h1>FloatTable P1 WMS Values</h1>
+
+<MudDataGrid T="CombinedRecords" MultiSelection="false" Hover="true" Hideable="true" Items="@p1_wms" Filterable="true" QuickFilter="@_quickFilter">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">WMS P1 List</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.DateAndTime" Title="DateTime"/>
+        <PropertyColumn Property="x => x.Millitm" Title="Millitm"/>
+        <PropertyColumn Property="x => x.TagIndex1_Value" Title="Length"Format="##.####"/>
+        <PropertyColumn Property="x => x.TagIndex4_Value" Title="Weight (Lbs)" Format="###.####"/>
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="CombinedRecords" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private List<CombinedRecords>? p1_wms = null;
+
+    private string _searchString = "";
+
+    private Func<CombinedRecords, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.DateAndTime.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.Millitm.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{x.TagIndex1_Value:##.####}".Contains(_searchString))
+            return true;
+        if ($"{x.TagIndex4_Value:###.####}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var rawWMSList = await DataService.SkipIrrelevant<FloatTableP1_Table>();
+
+            p1_wms = CombinedRows(rawWMSList);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+            p1_wms = new List<CombinedRecords>();
+        }
+
+    }
+
+    private List<CombinedRecords> CombinedRows(List<FloatTableP1_Table> rawData)
+    {
+        return rawData
+            .GroupBy(x => new { x.DateAndTime, x.Millitm })
+            .Select(g => new CombinedRecords
+                {
+                    DateAndTime = g.Key.DateAndTime,
+                    Millitm = g.Key.Millitm,
+                    TagIndex0 = g.FirstOrDefault(x => x.TagIndex == 0)?.TagIndex ?? 0,
+                    TagIndex0_Value = g.FirstOrDefault(x => x.TagIndex == 0)?.Val ?? 0,
+                    TagIndex1 = g.FirstOrDefault(x => x.TagIndex == 1)?.TagIndex ?? 1,
+                    TagIndex1_Value = g.FirstOrDefault(x => x.TagIndex == 1)?.Val ?? 0,
+                    TagIndex2 = g.FirstOrDefault(x => x.TagIndex == 2)?.TagIndex ?? 2,
+                    TagIndex2_Value = g.FirstOrDefault(x => x.TagIndex == 2)?.Val ?? 0,
+                    TagIndex3 = g.FirstOrDefault(x => x.TagIndex == 3)?.TagIndex ?? 3,
+                    TagIndex3_Value = g.FirstOrDefault(x => x.TagIndex == 3)?.Val ?? 0,
+                    TagIndex4 = g.FirstOrDefault(x => x.TagIndex == 4)?.TagIndex ?? 4,
+                    TagIndex4_Value = g.FirstOrDefault(x => x.TagIndex == 4)?.Val ?? 0,
+                })
+            .ToList();
+    }
+}

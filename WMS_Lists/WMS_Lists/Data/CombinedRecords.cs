@@ -1,4 +1,6 @@
-﻿namespace WMS_Lists.Data;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace WMS_Lists.Data;
 public class CombinedRecords
 {
     public DateTime? DateAndTime { get; set; }
@@ -11,6 +13,6 @@ public class CombinedRecords
     public double? TagIndex2_Value { get; set; }
     public short? TagIndex3 { get; set; }
     public double? TagIndex3_Value { get; set; }
-    public char? Status { get; set; }
-    public char? Marker { get; set; }
+    public short? TagIndex4 { get; set; }
+    public double? TagIndex4_Value { get; set; }
 }

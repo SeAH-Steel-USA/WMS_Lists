@@ -1,0 +1,75 @@
+﻿@page "/eventloggerwnl"
+@using Microsoft.EntityFrameworkCore
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+@inject Services.DataService DataService
+
+<PageTitle>MAIR </PageTitle>
+
+<h3>Weight and Length</h3>
+
+<MudExpansionPanels MultiExpansion="true">
+    <MudExpansionPanel Text="Weight">
+        <MudDataGrid T="EventLoggerWeight" MultiSelection="false" Hover="true" Hideable="true" Items="@mair_weight" Filterable="true" QuickFilter="@_quickFilter">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">MAIR Weight</MudText>
+                <MudSpacer />
+                <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <Columns>
+                <PropertyColumn Property="x => x.EventID" Format="#####"/>
+                <PropertyColumn Property="x => x.TubeID" Format="##"/>
+                <PropertyColumn Property="x => x.TestPassed"/>
+                <PropertyColumn Property="x => x.Nominal"/>
+                <PropertyColumn Property="x => x.Measured"/>
+                <PropertyColumn Property="x => x.RangePlus"/>
+                <PropertyColumn Property="x => x.RangeMinus" />
+                <PropertyColumn Property="x => x.Date_timestamp" Title="Date" />
+            </Columns>
+
+            <PagerContent>
+                <MudDataGridPager T="CombinedRecords" />
+            </PagerContent>
+        </MudDataGrid>
+    </MudExpansionPanel>
+    <MudExpansionPanel Text="Lenght">
+        Panel Two Content
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
+
+    private List<EventLoggerWeight>? mair_weight = null;
+
+    private string _searchString = "";
+
+    private Func<EventLoggerWeight, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.EventID.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.TubeID.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{x.Measured:###}".Contains(_searchString))
+            return true;
+        return false;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            mair_weight = await DataService.GetAll<EventLoggerWeight>(1);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+            mair_weight = new List<EventLoggerWeight>();
+        }
+
+    }
+
+}

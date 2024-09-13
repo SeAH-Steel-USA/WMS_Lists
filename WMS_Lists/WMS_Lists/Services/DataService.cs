@@ -8,17 +8,28 @@ namespace WMS_Lists.Services
     {
         public readonly ApplicationDbContext _context;
 
-        public DataService(ApplicationDbContext context) 
+        public readonly MAIRDbContext _maircontext;
+
+        public DataService(ApplicationDbContext context, MAIRDbContext maircontext) 
         {  
             _context = context;
+            _maircontext = maircontext;
         }
 
-        public async Task<List<T>> GetAll<T>() where T : class
+        public async Task<List<T>> GetAll<T>(int type) where T : class
         {
             try
             {
-                var result = await _context.Set<T>().ToListAsync();
-                return result ?? new List<T>();
+                if (type == 0)
+                {
+                    var result = await _context.Set<T>().ToListAsync();
+                    return result ?? new List<T>();
+                }
+                else
+                {
+                    var result = await _maircontext.Set<T>().ToListAsync();
+                    return result ?? new List<T>();
+                }
             }
             catch (Exception ex)
             {
@@ -32,7 +43,7 @@ namespace WMS_Lists.Services
             try
             {
                 var result = await _context.Set<T>()
-                                            .Skip(3700000)
+                                            .Skip(370000)
                                             .ToListAsync();
 
                 return result ?? new List<T>();

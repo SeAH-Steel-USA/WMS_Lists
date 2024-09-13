@@ -10,7 +10,7 @@
         public string? Measured { get; set; }
         public string? RangePlus { get; set; }
         public string? RangeMinus { get; set; }
-        public DateTime timestamp { get; set; }
-        public DateTime Date_timestamp { get; set; }
+        public byte[]? timestamp { get; set; }
+        public DateTime? Date_timestamp { get; set; }
     }
 }

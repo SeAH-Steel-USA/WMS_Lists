@@ -7,7 +7,6 @@ namespace WMS_Lists.Services
     public class DataService
     {
         public readonly ApplicationDbContext _context;
-
         public readonly MAIRDbContext _maircontext;
 
         public DataService(ApplicationDbContext context, MAIRDbContext maircontext) 
@@ -16,20 +15,12 @@ namespace WMS_Lists.Services
             _maircontext = maircontext;
         }
 
-        public async Task<List<T>> GetAll<T>(int type) where T : class
+        public async Task<List<T>> GetAllWMSP1<T>(int type) where T : class
         {
             try
             {
-                if (type == 0)
-                {
-                    var result = await _context.Set<T>().ToListAsync();
-                    return result ?? new List<T>();
-                }
-                else
-                {
-                    var result = await _maircontext.Set<T>().ToListAsync();
-                    return result ?? new List<T>();
-                }
+                var result = await _context.Set<T>().ToListAsync();
+                return result ?? new List<T>();
             }
             catch (Exception ex)
             {
@@ -38,17 +29,39 @@ namespace WMS_Lists.Services
             }
         }
 
-        public async Task<List<T>> SkipIrrelevant<T>() where T : class
+        public async Task<List<T>> SkipIrrelevantWMSP1<T>(int count) where T : class
         {
             try
             {
                 var result = await _context.Set<T>()
-                                            .Skip(370000)
+                                            .Skip(count)
                                             .ToListAsync();
 
                 return result ?? new List<T>();
             }
             catch(Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return new List<T>();
+            }
+        }
+
+        public async Task<List<EventLoggerWeight>> GetEventLoggerWeightsAsync()
+        {
+            return await _maircontext.Set<EventLoggerWeight>().ToListAsync();
+        }
+
+        public async Task<List<T>> SkipIrrelevantMAIRWeight<T>(int count) where T : class
+        {
+            try
+            {
+                var result = await _maircontext.Set<T>()
+                                            .Skip(count)
+                                            .ToListAsync();
+
+                return result ?? new List<T>();
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 return new List<T>();

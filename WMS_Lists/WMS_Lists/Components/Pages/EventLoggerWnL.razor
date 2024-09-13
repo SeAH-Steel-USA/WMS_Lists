@@ -23,8 +23,6 @@
                 <PropertyColumn Property="x => x.TestPassed"/>
                 <PropertyColumn Property="x => x.Nominal"/>
                 <PropertyColumn Property="x => x.Measured"/>
-                <PropertyColumn Property="x => x.RangePlus"/>
-                <PropertyColumn Property="x => x.RangeMinus" />
                 <PropertyColumn Property="x => x.Date_timestamp" Title="Date" />
             </Columns>
 
@@ -33,7 +31,7 @@
             </PagerContent>
         </MudDataGrid>
     </MudExpansionPanel>
-    <MudExpansionPanel Text="Lenght">
+    <MudExpansionPanel Text="Length">
         Panel Two Content
     </MudExpansionPanel>
 </MudExpansionPanels>
@@ -62,7 +60,7 @@
     {
         try
         {
-            mair_weight = await DataService.GetAll<EventLoggerWeight>(1);
+            mair_weight = await DataService.SkipIrrelevantMAIRWeight<EventLoggerWeight>(44000);
         }
         catch (Exception ex)
         {

@@ -9,7 +9,6 @@ namespace WMS_Lists.Data
         {
         }
 
-        public DbSet<EventLoggerWeight> EVENT_LOGGER_WEIGHT { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

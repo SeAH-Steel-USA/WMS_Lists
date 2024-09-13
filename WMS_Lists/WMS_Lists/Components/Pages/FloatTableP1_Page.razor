@@ -53,7 +53,7 @@
     {
         try
         {
-            var rawWMSList = await DataService.SkipIrrelevant<FloatTableP1_Table>();
+            var rawWMSList = await DataService.SkipIrrelevantWMSP1<FloatTableP1_Table>(3700000);
 
             p1_wms = CombinedRows(rawWMSList);
         }

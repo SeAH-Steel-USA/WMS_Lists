@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace WMS_Lists.Data
-
 {
     public class ApplicationDbContext : DbContext
     {

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-
-namespace WMS_Lists.Data;
+﻿namespace WMS_Lists.Data;
 public class CombinedRecords
 {
     public DateTime? DateAndTime { get; set; }

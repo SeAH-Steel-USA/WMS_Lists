@@ -10,12 +10,17 @@ namespace WMS_Lists.Data
         }
 
         public DbSet<FloatTableP1_Table> FloatTableP1 { get; set; }
+        public DbSet<MAIRCombo> MAIRCombos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<FloatTableP1_Table>()
                 .ToTable("FloatTableP1")
+                .HasNoKey();
+
+            modelBuilder.Entity<MAIRCombo>()
+                .ToView("MAIRComboView")
                 .HasNoKey();
         }
     }

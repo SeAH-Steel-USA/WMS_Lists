@@ -4,7 +4,7 @@
 @rendermode InteractiveServer
 @inject Services.DataService DataService
 
-<PageTitle>MAIR </PageTitle>
+<PageTitle>MAIR</PageTitle>
 
 <h3>Weight and Length</h3>
 
@@ -46,7 +46,6 @@
     {
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;
-
         if (x.EventID.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         if (x.TubeID.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))

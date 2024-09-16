@@ -67,5 +67,19 @@ namespace WMS_Lists.Services
                 return new List<T>();
             }
         }
+
+        public async Task<List<T>> GetAllMAIRCombo<T>() where T : class
+        {
+            try
+            {
+                var result = await _context.Set<T>().ToListAsync();
+                return result ?? new List<T>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occured: {ex.Message}");
+                return new List<T>();
+            }
+        }
     }
 }

@@ -1,0 +1,67 @@
+﻿@page "/maircombo"
+@using Microsoft.EntityFrameworkCore
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+@inject Services.DataService DataService
+
+<PageTitle>MAIR</PageTitle>
+
+<h3>MAIR Weight and Length</h3>
+
+<MudDataGrid T="WMS_Lists.Data.MAIRCombo" MultiSelection="false" Hover="true" Hideable="true" Items="@mair_combo" Filterable="true" QuickFilter="@_quickFilter" SortMode="SortMode.Multiple"
+             SortBy="@(new List<string> { nameof(WMS_Lists.Data.MAIRCombo.DateAndTime) + " desc" })">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">MAIR Data</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.WO" Title="Work Order" />
+        @* <PropertyColumn Property="x => x.TagIndex2"/> *@
+        @* <PropertyColumn Property="x => x.TagIndex0"/> *@
+        <PropertyColumn Property="x => x.Length" Format="##.####" />
+        @* <PropertyColumn Property="x => x.TagIndex1"/> *@
+        <PropertyColumn Property="x => x.Weight" Format="###" />
+        <PropertyColumn Property="x => x.DateAndTime" Title="DateTime" />
+        <PropertyColumn Property="x => x.Millitm" Title="Millitm" />
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="WMS_Lists.Data.MAIRCombo" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private List<WMS_Lists.Data.MAIRCombo>? mair_combo = null;
+
+    private string _searchString = "";
+
+    private Func<WMS_Lists.Data.MAIRCombo, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        if (x.DateAndTime.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{x.WO}".Contains(_searchString))
+            return true;
+        if ($"{x.Length:##.###}".Contains(_searchString))
+            return true;
+        if ($"{x.Weight:###}".Contains(_searchString))
+            return true;
+        return false;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            mair_combo = await DataService.GetAllMAIRCombo<WMS_Lists.Data.MAIRCombo>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+            mair_combo = new List<WMS_Lists.Data.MAIRCombo>();
+        }
+    }
+}

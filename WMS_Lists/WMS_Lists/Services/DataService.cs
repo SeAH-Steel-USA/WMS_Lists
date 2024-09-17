@@ -15,7 +15,7 @@ namespace WMS_Lists.Services
             _maircontext = maircontext;
         }
 
-        public async Task<List<T>> GetAllWMSP1<T>(int type) where T : class
+        public async Task<List<T>> GetAllWMSP1<T>() where T : class
         {
             try
             {
@@ -44,11 +44,6 @@ namespace WMS_Lists.Services
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 return new List<T>();
             }
-        }
-
-        public async Task<List<EventLoggerWeight>> GetEventLoggerWeightsAsync()
-        {
-            return await _maircontext.Set<EventLoggerWeight>().ToListAsync();
         }
 
         public async Task<List<T>> SkipIrrelevantMAIRWeight<T>(int count) where T : class

@@ -8,14 +8,5 @@ namespace WMS_Lists.Data
             : base(options)
         {
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<EventLoggerWeight>()
-                .ToTable("WEIGHT", "EVENT_LOGGER")
-                .HasNoKey();
-        }
     }
 }

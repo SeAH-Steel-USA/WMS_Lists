@@ -9,18 +9,34 @@ namespace WMS_Lists.Data
         {
         }
 
-        public DbSet<FloatTableP1_Table> FloatTableP1 { get; set; }
         public DbSet<MAIRCombo> MAIRCombos { get; set; }
+        public DbSet<P1Combo> P1Combo { get; set; }
+        public DbSet<P1TLC1Combo> P1TLC1Combo { get; set; }
+        public DbSet<P1TLC2Combo> P1TLC2Combo { get; set; }
+        public DbSet<TMillCombo> TMillCombo { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<FloatTableP1_Table>()
-                .ToTable("FloatTableP1")
-                .HasNoKey();
-
             modelBuilder.Entity<MAIRCombo>()
                 .ToView("MAIRComboView")
+                .HasNoKey();
+
+            modelBuilder.Entity<P1Combo>()
+                .ToView("P1ComboView")
+                .HasNoKey();
+
+            modelBuilder.Entity<P1TLC1Combo>()
+                .ToView("WMS_P1TLC1")
+                .HasNoKey();
+
+            modelBuilder.Entity<P1TLC2Combo>()
+                .ToView("WMS_P1TLC2")
+                .HasNoKey();
+
+            modelBuilder.Entity<TMillCombo>()
+                .ToView("TMILLComboView")
                 .HasNoKey();
         }
     }

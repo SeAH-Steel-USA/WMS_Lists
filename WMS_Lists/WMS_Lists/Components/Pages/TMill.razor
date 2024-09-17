@@ -1,0 +1,92 @@
+﻿@page "/tmillcombo"
+@using Microsoft.EntityFrameworkCore
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+@inject Services.DataService DataService
+
+<PageTitle>Tubing Mill WMS</PageTitle>
+
+@if (tmill_wms != null)
+{
+    <MudDataGrid T="Data.TMillCombo" MultiSelection="false" Hover="true" Hideable="true" Items="@tmill_wms" Filterable="true" QuickFilter="@_quickFilter">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Tubing Mill List</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <Columns>
+            <TemplateColumn Title="WO" SortBy="x => x.WO">
+                <CellTemplate>
+                    @{
+                        var formattedWO = FormatWO(context.Item.WO);
+                    }
+                    @formattedWO
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Length" Format="##.####" />
+            <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
+        </Columns>
+
+        <PagerContent>
+            <MudDataGridPager T="Data.TMillCombo" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+@code {
+    private List<Data.TMillCombo>? tmill_wms = null;
+
+    private string _searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            tmill_wms = await DataService.SkipIrrelevantWMSP1<Data.TMillCombo>(1000000);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+            tmill_wms = new List<Data.TMillCombo>();
+        }
+    }
+
+    private Func<Data.TMillCombo, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        if (x.DateAndTime.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.Millitm.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{x.Length:##.####}".Contains(_searchString))
+            return true;
+        if ($"{x.Weight:###.####}".Contains(_searchString))
+            return true;
+        string formattedWO = FormatWO(x.WO.ToString());
+        if (formattedWO.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    };
+
+    private string FormatWO(string wo)
+    {
+        if (string.IsNullOrEmpty(wo))
+            return string.Empty;
+
+        // Assuming WO is always in the format "TGxx" where xx is a number
+        if (wo.Length >= 3 && wo.StartsWith("TG", StringComparison.OrdinalIgnoreCase))
+        {
+            string prefix = wo.Substring(0, 2); // "TG"
+            string number = wo.Substring(2);    // The rest of the string
+
+            // Pad the number part to 4 digits
+            return $"{prefix}{number.PadLeft(4, '0')}";
+        }
+
+        // If it doesn't match the expected format, return it unchanged
+        return wo;
+    }
+}

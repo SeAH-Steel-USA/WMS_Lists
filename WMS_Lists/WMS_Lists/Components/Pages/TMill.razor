@@ -25,6 +25,16 @@
                 </CellTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Length" Format="##.####" />
+            <PropertyColumn Property="x => x.Weight" Format="###.######" />
+            <TemplateColumn Title="Lbs/Foot" Filterable="true">
+                <CellTemplate>
+                    @{
+                        var x = context.Item;
+                        var calc_ftlbs = x.Weight / x.Length;
+                        <MudText>@calc_ftlbs</MudText>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
             <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
         </Columns>
 

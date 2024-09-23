@@ -18,13 +18,18 @@
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="x => x.WO" Title="Work Order" />
-        @* <PropertyColumn Property="x => x.TagIndex2"/> *@
-        @* <PropertyColumn Property="x => x.TagIndex0"/> *@
         <PropertyColumn Property="x => x.Length" Format="##.####" />
-        @* <PropertyColumn Property="x => x.TagIndex1"/> *@
         <PropertyColumn Property="x => x.Weight" Format="###" />
+        <TemplateColumn Title="Lbs/foot" Filterable="true">
+            <CellTemplate>
+                @{
+                    var x = context.Item;
+                    var calc_ftlbs = x.Weight / x.Length;
+                    <MudText>@calc_ftlbs</MudText>
+                }
+            </CellTemplate>
+        </TemplateColumn>
         <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
-        <PropertyColumn Property="x => x.Millitm" Title="Millitm" />
     </Columns>
 
     <PagerContent>

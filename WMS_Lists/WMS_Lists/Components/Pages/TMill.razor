@@ -1,40 +1,34 @@
 ﻿@page "/tmillcombo"
+
 @using Microsoft.EntityFrameworkCore
+@using System.Text
+
 @attribute [StreamRendering]
+
 @rendermode InteractiveServer
+
 @inject Services.DataService DataService
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
 
 <PageTitle>Tubing Mill WMS</PageTitle>
 
 @if (tmill_wms != null)
 {
-    <MudDataGrid T="Data.TMillCombo" MultiSelection="false" Hover="true" Hideable="true" Items="@tmill_wms" Filterable="true" QuickFilter="@_quickFilter">
+    <MudDataGrid T="Data.TMillCombo" MultiSelection="false" Hover="true" Hideable="true" @ref="dataGrid" Items="@tmill_wms" Filterable="true" QuickFilter="@_quickFilter">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Tubing Mill List</MudText>
             <MudSpacer />
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportToCSV">Export to CSV</MudButton>
         </ToolBarContent>
         <Columns>
-            <TemplateColumn Title="WO" SortBy="x => x.WO">
-                <CellTemplate>
-                    @{
-                        var formattedWO = FormatWO(context.Item.WO);
-                    }
-                    @formattedWO
-                </CellTemplate>
-            </TemplateColumn>
+            <PropertyColumn Property="x => x.WorkOrder" />
             <PropertyColumn Property="x => x.Length" Format="##.####" />
             <PropertyColumn Property="x => x.Weight" Format="###.######" />
-            <TemplateColumn Title="Lbs/Foot" Filterable="true">
-                <CellTemplate>
-                    @{
-                        var x = context.Item;
-                        var calc_ftlbs = x.Weight / x.Length;
-                        <MudText>@calc_ftlbs?.ToString("00.0000")</MudText>
-                    }
-                </CellTemplate>
-            </TemplateColumn>
+            <PropertyColumn Property="x => x.LbsFt" Format="##.####" />
             <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
         </Columns>
 
@@ -43,11 +37,17 @@
         </PagerContent>
     </MudDataGrid>
 }
+else
+{
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Medium" Indeterminate="true" Class="my-7"/>
+}
 
 @code {
     private List<Data.TMillCombo>? tmill_wms = null;
 
     private string _searchString = "";
+
+    private MudDataGrid<Data.TMillCombo> dataGrid;
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,4 +99,26 @@
         // If it doesn't match the expected format, return it unchanged
         return wo;
     }
+
+    private async Task ExportToCSV()
+    {
+        try
+        {
+            if (dataGrid != null)
+            {
+                await dataGrid.DownloadCsv(JSRuntime, "exported_Tubing_Mill_data.csv");
+                Snackbar.Add("CSV exported successfully", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("DataGrid is not initialized", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error exporting CSV: {ex.Message}", Severity.Error);
+
+        }
+    }
+
 }

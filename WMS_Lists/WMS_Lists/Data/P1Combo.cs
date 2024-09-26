@@ -10,5 +10,7 @@
         public double? Length { get; set; }
         public short? TagIndex4 { get; set; }
         public double? Weight { get; set; }
+        public short? TagIndex0 { get; set; }
+        public double? LbsFt { get; set; }
     }
 }

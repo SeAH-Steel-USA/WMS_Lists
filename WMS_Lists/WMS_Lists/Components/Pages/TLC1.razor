@@ -1,8 +1,14 @@
 ﻿@page "/p1tlc1combo"
+
 @using Microsoft.EntityFrameworkCore
+
 @attribute [StreamRendering]
+
 @rendermode InteractiveServer
+
 @inject Services.DataService DataService
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
 
 <PageTitle>P1 WMS Threading</PageTitle>
 
@@ -10,23 +16,17 @@
 
 @if(tlc1_wms != null)
 {
-    <MudDataGrid T="Data.P1TLC1Combo" MultiSelection="false" Hover="true" Hideable="true" Items="@tlc1_wms" Filterable="true" QuickFilter="@_quickFilter">
+    <MudDataGrid T="Data.P1TLC1Combo" MultiSelection="false" Hover="true" Hideable="true" @ref="dataGrid" Items="@tlc1_wms" Filterable="true" QuickFilter="@_quickFilter">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Casing 1 List</MudText>
             <MudSpacer />
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportToCSV">Export to CSV</MudButton>
         </ToolBarContent>
         <Columns>
-            <TemplateColumn Title="WO" SortBy="x => x.WO">
-                <CellTemplate>
-                    @{
-                        var wo = context.Item.WO.ToString();
-                        var formattedWO = wo.Length <= 3 ? $"TH0{wo.PadLeft(3, '0')}" : $"TH{wo}";
-                    }
-                    @formattedWO
-                </CellTemplate>
-            </TemplateColumn>
+            <PropertyColumn Property="x => x.WorkOrder" />
             <PropertyColumn Property="x => x.Length" Format="##.####" />
             <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
         </Columns>
@@ -36,11 +36,17 @@
         </PagerContent>
     </MudDataGrid>
 }
+else
+{
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Medium" Indeterminate="true" Class="my-7" />
+}
 
 @code {
 	private List<Data.P1TLC1Combo>? tlc1_wms = null;
 
     private string _searchString = "";
+
+    private MudDataGrid<Data.P1TLC1Combo> dataGrid;
 
     private Func<Data.P1TLC1Combo, bool> _quickFilter => x =>
     {
@@ -51,8 +57,7 @@
             return true;
         if ($"{x.Length:##.####}".Contains(_searchString))
             return true;
-        string formattedWO = FormatWO(x.WO.ToString());
-        if (formattedWO.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (x.WorkOrder.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;
@@ -72,12 +77,24 @@
 
     }
 
-    private string FormatWO(string wo)
+    private async Task ExportToCSV()
     {
-        if (string.IsNullOrEmpty(wo))
-            return string.Empty;
+        try
+        {
+            if (dataGrid != null)
+            {
+                await dataGrid.DownloadCsv(JSRuntime, "exported_Casing1_data.csv");
+                Snackbar.Add("CSV exported successfully", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("DataGrid is not initialized", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error exporting CSV: {ex.Message}", Severity.Error);
 
-        wo = wo.ToString();
-        return wo.Length <= 3 ? $"TH0{wo.PadLeft(3, '0')}" : $"TH{wo}";
+        }
     }
 }

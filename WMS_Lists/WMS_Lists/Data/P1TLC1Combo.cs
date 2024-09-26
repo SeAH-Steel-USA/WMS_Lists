@@ -8,5 +8,6 @@
         public double? Length { get; set; }
         public short? TagIndex1 { get; set; }
         public double? WO { get; set; }
+        public string? WorkOrder { get; set; }
     }
 }

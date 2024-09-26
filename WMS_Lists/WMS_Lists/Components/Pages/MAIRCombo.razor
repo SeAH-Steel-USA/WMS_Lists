@@ -1,46 +1,55 @@
 ﻿@page "/maircombo"
+
 @using Microsoft.EntityFrameworkCore
+
 @attribute [StreamRendering]
+
 @rendermode InteractiveServer
+
 @inject Services.DataService DataService
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
 
 <PageTitle>MAIR</PageTitle>
 
 <h3>MAIR Weight and Length</h3>
 
-<MudDataGrid T="WMS_Lists.Data.MAIRCombo" MultiSelection="false" Hover="true" Hideable="true" Items="@mair_combo" Filterable="true" QuickFilter="@_quickFilter" SortMode="SortMode.Multiple"
+@if(mair_combo != null)
+{
+    <MudDataGrid T="WMS_Lists.Data.MAIRCombo" MultiSelection="false" Hover="true" Hideable="true" Items="@mair_combo" Filterable="true" @ref="dataGrid" QuickFilter="@_quickFilter" SortMode="SortMode.Multiple"
              SortBy="@(new List<string> { nameof(WMS_Lists.Data.MAIRCombo.DateAndTime) + " desc" })">
     <ToolBarContent>
         <MudText Typo="Typo.h6">MAIR Data</MudText>
         <MudSpacer />
         <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportToCSV">Export to CSV</MudButton>
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="x => x.WO" Title="Work Order" />
         <PropertyColumn Property="x => x.Length" Format="##.####" />
         <PropertyColumn Property="x => x.Weight" Format="###" />
-        <TemplateColumn Title="Lbs/foot" Filterable="true">
-            <CellTemplate>
-                @{
-                    var x = context.Item;
-                    var calc_ftlbs = x.Weight / x.Length;
-                    <MudText>@calc_ftlbs?.ToString("00.0000")</MudText>
-                }
-            </CellTemplate>
-        </TemplateColumn>
+        <PropertyColumn Property="x => x.LbsFt" Format="##.####"/>
         <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
     </Columns>
 
     <PagerContent>
         <MudDataGridPager T="WMS_Lists.Data.MAIRCombo" />
     </PagerContent>
-</MudDataGrid>
+    </MudDataGrid>
+}
+else
+{
+<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Medium" Indeterminate="true" Class="my-7" />
+}
 
 @code {
     private List<WMS_Lists.Data.MAIRCombo>? mair_combo = null;
 
     private string _searchString = "";
+
+    private MudDataGrid<Data.MAIRCombo> dataGrid;
 
     private Func<WMS_Lists.Data.MAIRCombo, bool> _quickFilter => x =>
     {
@@ -67,6 +76,27 @@
         {
             Console.WriteLine($"Error loading data: {ex.Message}");
             mair_combo = new List<WMS_Lists.Data.MAIRCombo>();
+        }
+    }
+
+    private async Task ExportToCSV()
+    {
+        try
+        {
+            if (dataGrid != null)
+            {
+                await dataGrid.DownloadCsv(JSRuntime, "exported_MAIR_data.csv");
+                Snackbar.Add("CSV exported successfully", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("DataGrid is not initialized", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error exporting CSV: {ex.Message}", Severity.Error);
+
         }
     }
 }

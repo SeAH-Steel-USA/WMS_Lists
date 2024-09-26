@@ -13,6 +13,8 @@
 
 <PageTitle>Tubing Mill WMS</PageTitle>
 
+<h1>Tubing Mill WMS Values</h1>
+
 @if (tmill_wms != null)
 {
     <MudDataGrid T="Data.TMillCombo" MultiSelection="false" Hover="true" Hideable="true" @ref="dataGrid" Items="@tmill_wms" Filterable="true" QuickFilter="@_quickFilter">

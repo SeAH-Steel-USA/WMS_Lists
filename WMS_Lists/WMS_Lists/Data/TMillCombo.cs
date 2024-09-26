@@ -12,7 +12,6 @@
         public double? Weight { get; set; }
         public short? TagIndex0 { get; set; }
         public double? LbsFt { get; set; }
-        public string? CutWO { get; set; }
         public string? WorkOrder { get; set; }
     }
 }

@@ -76,31 +76,11 @@ else
             return true;
         if ($"{x.Weight:###.####}".Contains(_searchString))
             return true;
-        string formattedWO = FormatWO(x.WO.ToString());
-        if (formattedWO.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if ($"{x.WorkOrder}".Contains(_searchString))
             return true;
 
         return false;
     };
-
-    private string FormatWO(string wo)
-    {
-        if (string.IsNullOrEmpty(wo))
-            return string.Empty;
-
-        // Assuming WO is always in the format "TGxx" where xx is a number
-        if (wo.Length >= 3 && wo.StartsWith("TG", StringComparison.OrdinalIgnoreCase))
-        {
-            string prefix = wo.Substring(0, 2); // "TG"
-            string number = wo.Substring(2);    // The rest of the string
-
-            // Pad the number part to 4 digits
-            return $"{prefix}{number.PadLeft(4, '0')}";
-        }
-
-        // If it doesn't match the expected format, return it unchanged
-        return wo;
-    }
 
     private async Task ExportToCSV()
     {

@@ -1,6 +1,7 @@
 ﻿@page "/maircombo"
 
 @using Microsoft.EntityFrameworkCore
+@using System.Timers
 
 @attribute [StreamRendering]
 
@@ -51,6 +52,10 @@ else
 
     private MudDataGrid<Data.MAIRCombo> dataGrid;
 
+    private Timer refreshTimer;
+
+    private List<Data.MAIRCombo> Items = new List<Data.MAIRCombo>();
+
     private Func<WMS_Lists.Data.MAIRCombo, bool> _quickFilter => x =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
@@ -77,6 +82,11 @@ else
             Console.WriteLine($"Error loading data: {ex.Message}");
             mair_combo = new List<WMS_Lists.Data.MAIRCombo>();
         }
+
+        refreshTimer = new Timer(30000);
+        refreshTimer.Elapsed += async (sender, e) => await RefreshData();
+        refreshTimer.AutoReset = true;
+        refreshTimer.Enabled = true;
     }
 
     private async Task ExportToCSV()
@@ -98,5 +108,17 @@ else
             Snackbar.Add($"Error exporting CSV: {ex.Message}", Severity.Error);
 
         }
+    }
+
+    private async Task RefreshData()
+    {
+        Items = await DataService.GetAllMAIRCombo<WMS_Lists.Data.MAIRCombo>();
+
+        await InvokeAsync(() => dataGrid.ReloadServerData());
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
     }
 }

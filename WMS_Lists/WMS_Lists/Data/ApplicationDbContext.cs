@@ -38,6 +38,10 @@ namespace WMS_Lists.Data
             modelBuilder.Entity<TMillCombo>()
                 .ToView("TMILLComboView")
                 .HasNoKey();
+
+            modelBuilder.Entity<CMillCombo>()
+                .ToView("CMillComboView")
+                .HasNoKey();
         }
     }
 }

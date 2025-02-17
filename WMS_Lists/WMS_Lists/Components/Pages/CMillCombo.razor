@@ -1,0 +1,105 @@
+﻿@page "/cmillcombo"
+
+@using Microsoft.EntityFrameworkCore
+@using System.Text
+
+@attribute [StreamRendering]
+
+@rendermode InteractiveServer
+
+@inject Services.DataService DataService
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
+
+<PageTitle>Casing Mill Final WMS</PageTitle>
+
+<h1>Casing Mill WMS Values</h1>
+
+@if (cmill_wms != null)
+{
+    <MudDataGrid T="Data.CMillCombo" MultiSelection="false" Hover="true" Hideable="true" @ref="dataGrid" Items="@cmill_wms" Filterable="true" QuickFilter="@_quickFilter">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Casing Mill List</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportToCSV">Export to CSV</MudButton>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.WO" />
+            <PropertyColumn Property="x => x.Length" Format="##.####" />
+            <PropertyColumn Property="x => x.Weight" Format="###.######" />
+            <PropertyColumn Property="x => x.FtLbs" Format="##.####" />
+            <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
+        </Columns>
+
+        <PagerContent>
+            <MudDataGridPager T="Data.CMillCombo" />
+        </PagerContent>
+    </MudDataGrid>
+}
+else
+{
+    <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Medium" Indeterminate="true" Class="my-7" />
+}
+
+@code {
+    private List<Data.CMillCombo>? cmill_wms = null;
+
+    private string _searchString = "";
+
+    private MudDataGrid<Data.CMillCombo> dataGrid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            cmill_wms = await DataService.GetAllWMSP1<Data.CMillCombo>();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+            cmill_wms = new List<Data.CMillCombo>();
+        }
+    }
+
+    private async Task ExportToCSV()
+    {
+        try
+        {
+            if (dataGrid != null)
+            {
+                await dataGrid.DownloadCsv(JSRuntime, "exported_P1_data.csv");
+                Snackbar.Add("CSV exported successfully", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("DataGrid is not initialized", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error exporting CSV: {ex.Message}", Severity.Error);
+
+        }
+    }
+
+    private Func<Data.CMillCombo, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        if (x.DateAndTime.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.Millitm.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{x.Length:##.####}".Contains(_searchString))
+            return true;
+        if ($"{x.Weight:###.####}".Contains(_searchString))
+            return true;
+        if ($"{x.WO}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+}

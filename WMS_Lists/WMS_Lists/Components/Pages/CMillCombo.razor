@@ -55,7 +55,7 @@ else
     {
         try
         {
-            cmill_wms = await DataService.GetAllWMSP1<Data.CMillCombo>();
+            cmill_wms = await DataService.SkipIrrelevantWMSP1<Data.CMillCombo>(1000000);
         }
         catch(Exception ex)
         {

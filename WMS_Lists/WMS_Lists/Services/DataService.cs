@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
+using Microsoft.VisualBasic;
 using MudBlazor;
+using System.Linq;
 using System.Text;
 using WMS_Lists.Data;
 
@@ -36,8 +38,11 @@ namespace WMS_Lists.Services
         {
             try
             {
+                DateTime filter = DateTime.Now.AddDays(-730);     
                 var result = await _context.Set<T>()
-                                            .Skip(count)
+                                            .OrderByDescending(x => EF.Property<DateTime>(x, "DateAndTime"))
+                                            //.Skip(count)
+                                            .Where(x => EF.Property<DateTime>(x, "DateAndTime") >= filter)
                                             .ToListAsync();
 
                 return result ?? new List<T>();

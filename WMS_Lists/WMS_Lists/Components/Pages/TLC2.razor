@@ -16,25 +16,34 @@
 
 @if (tlc2_wms != null)
 {
-<MudDataGrid T="Data.P1TLC2Combo" MultiSelection="false" Hover="true" Hideable="true" @ref="dataGrid" Items="@tlc2_wms" Filterable="true" QuickFilter="@_quickFilter">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Casing 2 List</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        <MudSpacer />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportToCSV">Export to CSV</MudButton>
-    </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="x => x.WorkOrder" />
-        <PropertyColumn Property="x => x.Length" Format="##.####" />
-        <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
-    </Columns>
+    <MudDataGrid T="Data.P1TLC2Combo" MultiSelection="false" Hover="true" Hideable="true" @ref="dataGrid" Items="@Filteredtlc2" Filterable="true" QuickFilter="@_quickFilter" RowClassFunc="@((x, i) => x.Length < 34 ? "highlight-row-green" : null)">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Casing 2 List</MudText>
+            <MudButton>
+                <MudToggleIconButton @bind-Toggled="@filtered"
+                Icon="@Icons.Material.Filled.VisibilityOff"
+                ToggledIcon="@Icons.Material.Filled.Visibility"
+                Color="Color.Primary"
+                ToggledColor="Color.Secondary"
+                Title="Toggle In-Progress Only" />
+                <MudSpacer />
+            </MudButton>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportToCSV">Export to CSV</MudButton>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.WorkOrder" />
+            <PropertyColumn Property="x => x.Length" Format="##.####" />
+            <PropertyColumn Property="x => x.DateAndTime" Title="Date and Time" />
+        </Columns>
 
-    <PagerContent>
-        <MudDataGridPager T="Data.P1TLC2Combo" />
-    </PagerContent>
-</MudDataGrid>
+        <PagerContent>
+            <MudDataGridPager T="Data.P1TLC2Combo" />
+        </PagerContent>
+    </MudDataGrid>
 }
 else
 {
@@ -47,6 +56,13 @@ else
     private string _searchString = "";
 
     private MudDataGrid<Data.P1TLC2Combo> dataGrid;
+
+    private bool filtered = false;
+
+    private List<Data.P1TLC2Combo> Filteredtlc2 =>
+    filtered
+        ? tlc2_wms?.Where(i => i.Length < 34).ToList()
+        : tlc2_wms;
 
     private Func<Data.P1TLC2Combo, bool> _quickFilter => x =>
     {

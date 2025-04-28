@@ -16,12 +16,21 @@
 
 @if(tlc1_wms != null)
 {
-    <MudDataGrid T="Data.P1TLC1Combo" MultiSelection="false" Hover="true" Hideable="true" @ref="dataGrid" Items="@tlc1_wms" Filterable="true" QuickFilter="@_quickFilter">
+    <MudDataGrid T="Data.P1TLC1Combo" MultiSelection="false" Hover="true" Hideable="true" @ref="dataGrid" Items="@Filteredtlc1" Filterable="true" QuickFilter="@_quickFilter" RowClassFunc="@((x, i) => x.Length < 34 ? "highlight-row-green" : null)">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Casing 1 List</MudText>
+            <MudButton >
+                <MudToggleIconButton @bind-Toggled="@filtered"
+                Icon="@Icons.Material.Filled.VisibilityOff"
+                ToggledIcon="@Icons.Material.Filled.Visibility"
+                Color="Color.Primary"
+                ToggledColor="Color.Secondary"
+                Title="Toggle In-Progress Only" />
+                <MudSpacer />
+            </MudButton>
             <MudSpacer />
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
             <MudSpacer />
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportToCSV">Export to CSV</MudButton>
         </ToolBarContent>
@@ -42,11 +51,17 @@ else
 }
 
 @code {
-	private List<Data.P1TLC1Combo>? tlc1_wms = null;
+    private List<Data.P1TLC1Combo>? tlc1_wms = null;
 
     private string _searchString = "";
 
     private MudDataGrid<Data.P1TLC1Combo> dataGrid;
+    private bool filtered = false;
+    
+    private List<Data.P1TLC1Combo> Filteredtlc1 =>
+    filtered
+        ? tlc1_wms?.Where(i => i.Length < 34).ToList()
+        : tlc1_wms;
 
     private Func<Data.P1TLC1Combo, bool> _quickFilter => x =>
     {
